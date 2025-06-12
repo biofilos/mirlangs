@@ -1,0 +1,8 @@
+{
+  "files": [
+    {
+      "url": "https://ftp.ensembl.org/pub/release-114/gff3/homo_sapiens/Homo_sapiens.GRCh38.114.gff3.gz",
+      "dest": ["gff3_parsing"]
+    }
+  ]
+}
