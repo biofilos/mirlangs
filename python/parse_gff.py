@@ -23,8 +23,8 @@ def parse_gff3(in_file: Path, source):
                     annotation = {
                         "chromosome": chrom,
                         "feature_type": feature_type,
-                        "start": start,
-                        "end": end,
+                        "start": int(start),
+                        "end": int(end),
                         "strand": strand,
                         "attrs": attrs_parsed
                     }
