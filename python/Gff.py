@@ -1,8 +1,12 @@
 from parse_gff import parse_gff3
 from pathlib import Path
 from dataclasses import dataclass
-from functools import cached_property
 from gzip import open as gzopen
+
+class BadGffVersion(Exception):
+    def __init__(self, message="GFF is not version 3, or there is no version information in the header of the file"):
+        super().__init__(message)
+
 
 @dataclass
 class GffFeature:
@@ -50,7 +54,7 @@ class Gff:
         meta_d["regions"] = fixed_regions
         del meta_d["sequence_region"]
         if meta_d.get("gff_version", None) != "3":
-            raise ValueError("GFF is not version 3, or there is no version information in the header of the file")
+            raise BadGffVersion
         return meta_d
 
     def __str__(self):
