@@ -21,7 +21,7 @@ def parse_gff3(in_file: Path, source):
                     chrom, source, feature_type, start, end, _score, strand, _phase, attrs = line.strip().split("\t")
                     attrs_parsed = parse_attrs(attrs)
                     annotation = {
-                        "chromosome": chrom,
+                        "region": chrom,
                         "feature_type": feature_type,
                         "start": int(start),
                         "end": int(end),
