@@ -18,7 +18,7 @@ def parse_gff3(in_file: Path, source):
         for line in file_h:
             if not line.startswith("#"):
                 if source in line:
-                    chrom, source, feature_type, start, end, _score, strand, _phase, attrs = line.strip().split("\t")
+                    chrom, _source, feature_type, start, end, _score, strand, _phase, attrs = line.strip().split("\t")
                     attrs_parsed = parse_attrs(attrs)
                     annotation = {
                         "region": chrom,
@@ -29,6 +29,7 @@ def parse_gff3(in_file: Path, source):
                         "attrs": attrs_parsed
                     }
                     parsed_features.append(annotation)
+    print(len(parsed_features))
     return parsed_features
 
 if __name__ == "__main__":
