@@ -29,7 +29,6 @@ def parse_gff3(in_file: Path, source):
                         "attrs": attrs_parsed
                     }
                     parsed_features.append(annotation)
-    print(len(parsed_features))
     return parsed_features
 
 if __name__ == "__main__":
