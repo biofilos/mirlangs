@@ -1,6 +1,7 @@
 from pathlib import Path
 from gzip import open as gopen
 
+
 def parse_attrs(attrs_line) -> dict:
     """
     Converts a GFF3 attributes field into a dictionary
@@ -11,6 +12,7 @@ def parse_attrs(attrs_line) -> dict:
     ann_raw = {x[0]: x[1] for x in items}
     return ann_raw
 
+
 def parse_gff3(in_file: Path, source):
     open_fx = gopen if in_file.suffix == ".gz" else open
     parsed_features = []
@@ -18,7 +20,17 @@ def parse_gff3(in_file: Path, source):
         for line in file_h:
             if not line.startswith("#"):
                 if source in line:
-                    chrom, _source, feature_type, start, end, _score, strand, _phase, attrs = line.strip().split("\t")
+                    (
+                        chrom,
+                        _source,
+                        feature_type,
+                        start,
+                        end,
+                        _score,
+                        strand,
+                        _phase,
+                        attrs,
+                    ) = line.strip().split("\t")
                     attrs_parsed = parse_attrs(attrs)
                     annotation = {
                         "region": chrom,
@@ -26,10 +38,11 @@ def parse_gff3(in_file: Path, source):
                         "start": int(start),
                         "end": int(end),
                         "strand": strand,
-                        "attrs": attrs_parsed
+                        "attrs": attrs_parsed,
                     }
                     parsed_features.append(annotation)
     return parsed_features
+
 
 if __name__ == "__main__":
     # ensembl_havana are highly curated features. These are the ones we will capture
