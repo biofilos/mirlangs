@@ -1,8 +1,6 @@
 defmodule ParseGff3 do
   def main(_args) do
     ParseGff3.parse()
-    |> Enum.take(3)
-    |> IO.inspect()
   end
 
   def stream_file(filepath) do
