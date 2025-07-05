@@ -1,5 +1,9 @@
 defmodule ParseGff3 do
-  require IEx
+  def main(_args) do
+    ParseGff3.parse()
+    |> Enum.take(3)
+    |> IO.inspect()
+  end
 
   def stream_file(filepath) do
     case Path.extname(filepath) do
@@ -15,51 +19,40 @@ defmodule ParseGff3 do
     end
   end
 
-  def parse("##" <> rest) do
-    [ix | body] = String.trim(rest, "\n") |> String.split()
-
-    case ix do
-      "sequence-region" ->
-        [region, n_start, n_end] = body
-        %{region: %{region: region, start: n_start, end: n_end}}
-
-      "gff-version" ->
-        [ver | _] = body
-        %{gff_version: ver}
-
-      _ ->
-        nil
+  def parse_attrs(attrs_line) do
+    for attr <- String.split(attrs_line, ";"), into: %{} do
+      String.split(attr, "=") |> List.to_tuple()
     end
   end
 
-  def parse("#!" <> rest) do
-    [ix | body] = String.trim(rest, "\n") |> String.split()
-    [first | rest] = body
-    joined = Enum.reduce(rest, first, fn x, a -> a <> " " <> x end)
-
-    %{(ix |> String.replace("-", "_") |> String.to_atom()) => joined}
+  def extract_annotation([
+        chrom,
+        _source,
+        feature_type,
+        n_start,
+        n_end,
+        _score,
+        strand,
+        _phase,
+        attrs
+      ]) do
+    %{
+      region: chrom,
+      feature_type: feature_type,
+      start: String.to_integer(n_start),
+      end: String.to_integer(n_end),
+      strand: strand,
+      attrs: parse_attrs(attrs)
+    }
   end
 
-  def collapse_regions(%{region: data}, acc) do
-    new_region = %{data.region => %{start: data.start, end: data.end}}
-    all_regions = Map.merge(acc.regions, new_region)
-    acc = put_in(acc.regions, all_regions)
-    acc
-  end
-
-  def collapse_regions(data, acc) do
-    Map.merge(data, acc)
-  end
-
-  def parse_file do
+  def parse do
     Path.expand("../../../data/gff3_parsing/Homo_sapiens.GRCh38.114.gff3.gz", __DIR__)
     |> stream_file()
-    |> Stream.filter(fn x -> String.starts_with?(x, "#") end)
-    |> Stream.map(&ParseGff3.parse/1)
-    |> Stream.filter(fn x -> x end)
-    |> Enum.reduce(%{regions: %{}}, &collapse_regions/2)
+    |> Stream.filter(fn x -> !String.starts_with?(x, "#") end)
+    |> Stream.filter(fn x -> String.contains?(x, "ensembl_havana") end)
+    |> Stream.map(fn x -> String.trim(x, "\n") |> String.split("\t") end)
+    |> Stream.map(&extract_annotation/1)
+    |> Enum.to_list()
   end
 end
-
-meh = ParseGff3.parse_file()
-IO.inspect(meh)
