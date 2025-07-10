@@ -23,3 +23,5 @@ for file_obj in data:
             elif downloaded.name:
                 print(f"Copying {downloaded} to {destination}")
                 shutil.copy(downloaded, destination)
+        else:
+            print(f"File {destination} already exists")

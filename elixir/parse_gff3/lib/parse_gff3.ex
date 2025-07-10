@@ -44,6 +44,8 @@ defmodule ParseGff3 do
     }
   end
 
+  def extract_annotation(data), do: data
+
   def parse do
     Path.expand("../../../data/gff3_parsing/Homo_sapiens.GRCh38.114.gff3.gz", __DIR__)
     |> stream_file()
