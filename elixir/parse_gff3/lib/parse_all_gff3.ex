@@ -11,8 +11,6 @@ defmodule GFFfeature do
 end
 
 defmodule ParseAllGff3 do
-  require IEx
-
   def main(_args) do
     parse_file()
   end
