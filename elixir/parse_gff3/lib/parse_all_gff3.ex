@@ -2,15 +2,12 @@ defmodule RegionHeader do
   defstruct [:region, :start, :end]
 end
 
-defmodule GFFMeta do
-  defstruct []
-  def new(map), do: struct(__MODULE__, map)
-end
-
 defmodule GFFfeature do
   defstruct [:region, :feature_type, :start, :end, :strand, :attrs]
 
-  def new(map), do: struct(__MODULE__, map)
+  def new(map) do
+    struct(__MODULE__, map)
+  end
 end
 
 defmodule ParseAllGff3 do
@@ -18,8 +15,6 @@ defmodule ParseAllGff3 do
 
   def main(_args) do
     parse_file()
-    |> Enum.take(3)
-    |> IO.inspect()
   end
 
   def parse("##" <> rest) do
@@ -37,8 +32,7 @@ defmodule ParseAllGff3 do
 
       "gff-version" ->
         [ver | _] = body
-        IO.inspect(ver)
-        %{gff_version: ver} |> GFFMeta.new()
+        %{gff_version: ver}
 
       _ ->
         nil
@@ -50,7 +44,7 @@ defmodule ParseAllGff3 do
     [first | rest] = body
     joined = Enum.reduce(rest, first, fn x, a -> a <> " " <> x end)
 
-    %{(ix |> String.replace("-", "_") |> String.to_atom()) => joined} |> GFFMeta.new()
+    %{(ix |> String.replace("-", "_") |> String.to_atom()) => joined}
   end
 
   def parse(line) do
@@ -62,21 +56,18 @@ defmodule ParseAllGff3 do
   end
 
   def collapse_regions(%GFFfeature{} = data, acc) do
-    acc = put_in(acc.features, [data | acc.features])
-    acc
+    put_in(acc.features, [data | acc.features])
   end
 
   def collapse_regions(%RegionHeader{} = data, acc) do
     new_region = %{data.region => %{start: data.start, end: data.end}}
     all_regions = Map.merge(acc.regions, new_region)
-    acc = put_in(acc.regions, all_regions)
-    acc
+    put_in(acc.regions, all_regions)
   end
 
-  def collapse_regions(%GFFMeta{} = data, acc) do
+  def collapse_regions(%{} = data, acc) do
     meta = Map.merge(data, acc.metadata)
-    acc = put_in(acc.metadata, meta)
-    acc
+    put_in(acc.metadata, meta)
   end
 
   def collapse_regions(nil, acc) do
@@ -93,5 +84,3 @@ defmodule ParseAllGff3 do
     Map.update!(parsed_features, :features, &Enum.reverse/1)
   end
 end
-
-feats = ParseAllGff3.parse_file()
