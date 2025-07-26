@@ -8,7 +8,9 @@ def parse_attrs(attrs_line) -> dict:
     :param attrs_line: GFF3-formatted annotation attributes
     :return: dictionary of attributes
     """
-    # List and dictionary comprehensions are powerful tools to easily parse collections of data into dictionary and list data structures. **If** they are short and concise, they are quite easy to read. However, for complex processing logic, use a for-loop
+    # List and dictionary comprehensions are powerful tools to easily parse collections of data into
+    # dictionary and list data structures. **If** they are short and concise, they are quite easy to read.
+    # However, for complex processing logic, use a for-loop
     items = [x.split("=") for x in attrs_line.split(";")]
     ann_raw = {x[0]: x[1] for x in items}
     return ann_raw
