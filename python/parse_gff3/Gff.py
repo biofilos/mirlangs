@@ -3,7 +3,7 @@ from pathlib import Path
 from dataclasses import dataclass
 from gzip import open as gzopen
 
-
+# Python uses exceptions (as opposed to errors), which can be customised, and then raised as any other exception
 class BadGffVersion(Exception):
     def __init__(
         self,
@@ -11,7 +11,7 @@ class BadGffVersion(Exception):
     ):
         super().__init__(message)
 
-
+# `dataclass` classes are a very quick and easy way to declare classes that are mostly used to store data
 @dataclass
 class GffFeature:
     region: str
@@ -49,6 +49,9 @@ class Gff:
                     key, *line_data = line.lstrip("##").lstrip("#!").split()
                     key = key.replace("-", "_")
                     if key not in meta_d:
+                        # Ternary statements have a different syntax from other languages, but it is not that bad
+                        # it goes something like this: var_from_ternary = value_if_true if boolean_test else value_if_false
+                        # In python we can break expressions in several lines by enclosing it in parenthesis
                         meta_d[key] = (
                             " ".join(line_data)
                             if line.startswith("#!") or "gff_version" == key
@@ -59,6 +62,7 @@ class Gff:
                 else:
                     break
         if "sequence_region" in meta_d:
+            # One can capture part of a list in a variable as part of a list destructuring. Here, the first element is assigned to `key`, and the rest to `line_data`.
             fixed_regions = [None] * len(meta_d["sequence_region"])
             for ix, region_data in enumerate(meta_d["sequence_region"]):
                 region, start, end = region_data
@@ -68,9 +72,11 @@ class Gff:
         meta_d["regions"] = fixed_regions
         del meta_d["sequence_region"]
         if meta_d.get("gff_version", None) != "3":
+            # After defining a custom exception, it can be raised like any other exception
             raise BadGffVersion
         return meta_d
-
+    # The `__str__` method is a very easy way to polish the way classes are printed.
+    # In this case, running `print(gff_instance)` will show the string below
     def __str__(self):
         info = (
             f"GFF file: {self.gff_file}\n"
