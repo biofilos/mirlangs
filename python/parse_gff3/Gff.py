@@ -52,7 +52,8 @@ class Gff:
                     key = key.replace("-", "_")
                     if key not in meta_d:
                         # Ternary statements have a different syntax from other languages, but it is not that bad
-                        # it goes something like this: `var_from_ternary = value_if_true if boolean_test else value_if_false`
+                        # it goes something like this:
+                        # `var_from_ternary = value_if_true if boolean_test else value_if_false`
                         # In python we can break expressions in several lines by enclosing it in parentheses
                         meta_d[key] = (
                             " ".join(line_data)
