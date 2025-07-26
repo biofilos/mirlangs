@@ -46,12 +46,14 @@ class Gff:
         with open_fx(self.gff_file, "rt") as f:
             for line in f:
                 if line.startswith("#"):
+                    # One can capture part of a list in a variable as part of a list destructuring.
+                    # Here, the first element is assigned to `key`, and the rest to `line_data`.
                     key, *line_data = line.lstrip("##").lstrip("#!").split()
                     key = key.replace("-", "_")
                     if key not in meta_d:
                         # Ternary statements have a different syntax from other languages, but it is not that bad
-                        # it goes something like this: var_from_ternary = value_if_true if boolean_test else value_if_false
-                        # In python we can break expressions in several lines by enclosing it in parenthesis
+                        # it goes something like this: `var_from_ternary = value_if_true if boolean_test else value_if_false`
+                        # In python we can break expressions in several lines by enclosing it in parentheses
                         meta_d[key] = (
                             " ".join(line_data)
                             if line.startswith("#!") or "gff_version" == key
@@ -63,7 +65,6 @@ class Gff:
                     break
 
         if "sequence_region" in meta_d:
-            # One can capture part of a list in a variable as part of a list destructuring. Here, the first element is assigned to `key`, and the rest to `line_data`.
             fixed_regions = [None] * len(meta_d["sequence_region"])
             for ix, region_data in enumerate(meta_d["sequence_region"]):
                 region, start, end = region_data
