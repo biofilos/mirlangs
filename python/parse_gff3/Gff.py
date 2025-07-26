@@ -61,6 +61,7 @@ class Gff:
                         meta_d[key].append(line_data)
                 else:
                     break
+
         if "sequence_region" in meta_d:
             # One can capture part of a list in a variable as part of a list destructuring. Here, the first element is assigned to `key`, and the rest to `line_data`.
             fixed_regions = [None] * len(meta_d["sequence_region"])
